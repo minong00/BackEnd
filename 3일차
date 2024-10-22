@@ -1,0 +1,4 @@
+
+스프링 부트에서 롬북,스프링 시큐리티, 스프링 웹, jpa, jdbc api, mariaDbDriver,spring dev tool을 넣어보고
+컨트롤러는 이런 역할을 하는 애다 해주고 db에 전달
+겟 매핑은 프런트의 요청을 받아주는 애?
