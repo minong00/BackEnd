@@ -1,0 +1,4 @@
+mvc는 확장시켜주는얘
+@ResponseBody는 return되는 값을 html에 직접 넣어주는 역할
+
+하고 챗지피티로 로그인/회원가입 연습
