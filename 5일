@@ -1,0 +1,114 @@
+User라는 파일에서는  "사용자 정보를 표현"을 한다
+사용자와 관련된 필드, 메소드, JPA 어노테이션 등을 정의함
+
+```
+패키지 이름 적구
+import javax.persistence.*;
+
+@Entity
+@Table(name = "users") // 데이터베이스의 테이블 이름
+public class User {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY) // 기본 키 자동 생성
+    private Long id;
+
+    @Column(unique = true, nullable = false) // 유니크한 사용자명과 null 불가
+    private String username;
+
+    @Column(nullable = false) // 비밀번호는 null이 불가
+    private String password;
+
+    // 추가적인 필드 예시
+    @Column(nullable = false) // 이메일, null 불가
+    private String email;
+
+    private String firstName; // 이름
+    private String lastName; // 성
+
+    // 기본 생성자
+    public User() {
+    }
+
+    // 모든 필드를 포함하는 생성자
+    public User(String username, String password, String email, String firstName, String lastName) {
+        this.username = username;
+        this.password = password;
+        this.email = email;
+        this.firstName = firstName;
+        this.lastName = lastName;
+    }
+
+    // Getter와 Setter 메소드
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public String getFirstName() {
+        return firstName;
+    }
+
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
+
+    public String getLastName() {
+        return lastName;
+    }
+
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
+    }
+}
+```
+
+@Entity: 이 클래스가 JPA의 엔티티 클래스다. 클레스는 데이터베이스 테이블과 매핑된다.
+매핑이란: 한 객체나 데이터 구조를 다른 객체나 데이터 구조에 연결하는 것
+
+@Table(name = "users"): 이 엔티티가 매핑될 데이터베이스 테이블의 이름을 지정한다.
+기본적으로는 그냥 쓰지만 이렇게 바꿀수도 있음.
+
+@Id: 이 필드가 엔티티의 식별자(기본 키)임을 나타냅니다.
+
+@GeneratedValue: 기본 키의 값을 자동으로 생성하도록 설정합니다. 
+GenerationType.IDENTITY는 데이터베이스가 자동으로 증가하는 값을 사용하도록 합니다.
+
+@Column: 데이터베이스의 열에 대한 설정을 정의합니다.
+
+unique = true: 해당 필드가 유니크하다는 것을 나타냅니다.
+nullable = false: 해당 필드가 null 값을 허용하지 않음을 나타냅니다.
+필드: 사용자의 기본 정보인 username, password, email, firstName, lastName을 정의합니다. 필요에 따라 추가적인 필드를 더할 수 있습니다.
+
+기본 생성자: JPA에서 엔티티를 생성할 때 필요하므로 기본 생성자가 필요합니다.
+
+모든 필드를 포함하는 생성자: 객체를 생성할 때 모든 필드를 한 번에 초기화할 수 있게 합니다.
+
+Getter와 Setter 메소드: 각 필드에 대한 접근자와 설정자를 정의합니다. 이는 엔티티의 데이터를 외부에서 읽고 쓸 수 있도록 해줍니다.
