@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>홈 페이지</title>
+</head>
+<body>
+    <h1>환영합니다!</h1>
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            {% for message in messages %}
+                <p style="color: blue;">{{ message }}</p>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+
+    {% if 'username' not in session %}
+        <a href="/login">로그인</a>
+        <a href="/signup">회원가입</a>
+    {% endif %}
+</body>
+</html>
+Last edited 2시간 전
+
+
+
