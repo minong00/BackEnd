@@ -1,5 +1,7 @@
+
+
 <!DOCTYPE html>
-<html>
+<html lang ="ko">
 <head>
     <title>홈 페이지</title>
 </head>
@@ -12,14 +14,10 @@
             {% endfor %}
         {% endif %}
     {% endwith %}
-
+    
     {% if 'username' not in session %}
-        <a href="/login">로그인</a>
-        <a href="/signup">회원가입</a>
+        <a href="login">로그인</a>
+        <a href="signup">회원가입</a>
     {% endif %}
 </body>
 </html>
-Last edited 2시간 전
-
-
-
