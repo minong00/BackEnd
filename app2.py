@@ -1,8 +1,12 @@
 from flask import Flask, render_template, request, redirect, session, flash
 from flask_sqlalchemy import SQLAlchemy
 from werkzeug.security import generate_password_hash, check_password_hash
-import os
 from flask_cors import CORS
+from flask import abort
+from flask_admin import Admin
+from flask_admin.contrib.sqla import ModelView
+
+
 
 app = Flask(__name__)
 CORS(app)  # 모든 도메인 허용
@@ -20,11 +24,24 @@ class Users(db.Model):
     email = db.Column(db.String(120), unique=True, nullable=False)
     password_hash = db.Column(db.String(255), nullable=False)
 
+admin = Admin(app, name='My App', template_mode='bootstrap3')
+admin.add_view(ModelView(Users, db.session))  # Users 모델을 어드민 페이지에 추가
 
 # 초기 데이터베이스 생성
 with app.app_context():
     db.drop_all()  # 기존 테이블 전부 삭제
     db.create_all()  # 새로 테이블 생성
+
+    if not Users.query.filter_by(username='admin').first():
+        admin_user = Users(
+            username='admin',
+            email='admin@example.com',
+            password_hash=generate_password_hash('adminpassword'),  # 기본 비밀번호 해시화
+
+        )
+        db.session.add(admin_user)
+        db.session.commit()
+
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 @app.route('/')
 def home():
@@ -83,8 +100,19 @@ def login():
 def logout():
     session.pop('username', None)
     flash('로그아웃 되었습니다.')
+
     return redirect('/')
 
+
+def is_admin():
+    return session.get('role') == 'admin'  # 세션에서 역할 확인
+
+@app.route('/admin')
+def admin():
+    if not is_admin():
+        abort(403)  # 접근 금지
+
+    return render_template('admin.html')  # 관리자 대시보드 템플릿
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000, debug=True)
