@@ -1,0 +1,12 @@
+<!DOCTYPE html>
+<h1>공지사항 수정</h1>
+<form method="post" enctype="multipart/form-data">
+
+    <input type="text" name="title" value="{{ announcement.title }}" required>
+
+    <textarea name="body" required>{{ announcement.body }}</textarea>
+
+    <input type="file" name="attachment">
+
+    <button type="submit">수정</button>
+</form>

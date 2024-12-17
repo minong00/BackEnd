@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>새 공지사항 추가</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<body>
+    <div class="container mt-5">
+        <h1>새 공지사항 추가</h1>
+        <form method="post" enctype="multipart/form-data">
+            <div class="form-group">
+
+                <input type="text" name="title" class="form-control" required>
+            </div>
+
+            <div class="form-group">
+
+                <textarea name="body" class="form-control" rows="5" required></textarea>
+            </div>
+
+            <div class="form-group">
+
+                <input type="file" name="attachment" class="form-control-file">
+            </div>
+
+            <button type="submit" class="btn btn-primary">추가</button>
+            <a href="/announcements" class="btn btn-secondary">취소</a>
+        </form>
+    </div>
+</body>
+</html>
