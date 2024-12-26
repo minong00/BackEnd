@@ -4,6 +4,7 @@ from flask_cors import CORS
 import os
 from datetime import datetime
 
+
 app = Flask(__name__)
 CORS(app, resources={
     r"/*": {
@@ -26,14 +27,14 @@ db = SQLAlchemy(app)
 
 
 class Announcement(db.Model):
-    __tablename__ = 'announcements'
+    __tablename__: str = 'announcements'
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(200), nullable=False)
     body = db.Column(db.Text, nullable=False)
     attachment = db.Column(db.String(255), nullable=True)
     is_public = db.Column(db.Boolean, default=True)
-    created_at = db.Column(db.DateTime, default=datetime.utcnow)
-    updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    created_at = db.Column(db.DateTime, default=datetime)
+    updated_at = db.Column(db.DateTime, default=datetime, onupdate=datetime)
 
 
 # 공지사항 목록 조회
