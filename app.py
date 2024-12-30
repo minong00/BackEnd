@@ -1,8 +1,14 @@
-from flask import Flask, request, jsonify, session, send_from_directory
-from flask_sqlalchemy import SQLAlchemy
-from flask_cors import CORS
-import os
 from datetime import datetime
+
+from flask import Flask, request, session, jsonify, send_from_directory
+from flask_sqlalchemy import SQLAlchemy
+from werkzeug.security import generate_password_hash, check_password_hash
+from flask_cors import CORS
+from flask_admin import Admin
+from flask_admin.contrib.sqla import ModelView
+import os
+
+#from app2 import Users
 
 app = Flask(__name__)
 app.config['JSON_AS_ASCII'] = False  # ASCII 대신 UTF-8 사용
@@ -24,11 +30,19 @@ UPLOAD_FOLDER = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'upload
 
 if not os.path.exists(UPLOAD_FOLDER):
     os.makedirs(UPLOAD_FOLDER)
-
-
 db = SQLAlchemy(app)
 
+
+# app 초기화 후에 추가
+UPLOAD_FOLDER = os.path.join('static', 'uploads')
+if not os.path.exists(UPLOAD_FOLDER):
+    os.makedirs(UPLOAD_FOLDER)
+with app.app_context():
+    db.drop_all()  # 기존 테이블 전부 삭제
+    db.create_all()  # 새로 테이블 생성
+
 # User 모델 추가
+# noinspection PyDeprecation
 class User(db.Model):
     __tablename__ = 'users'
     id = db.Column(db.Integer, primary_key=True)
@@ -36,16 +50,17 @@ class User(db.Model):
     email = db.Column(db.String(120), unique=True, nullable=False)
     password_hash = db.Column(db.String(200), nullable=False)
     is_admin = db.Column(db.Boolean, default=False)
-    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+
 
     def set_password(self, password):
         self.password_hash = generate_password_hash(password)
 
     def check_password(self, password):
         return check_password_hash(self.password_hash, password)
+admin = Admin(app, name='My App', template_mode='bootstrap3')
+admin.add_view(ModelView(User, db.session))  # Users 모델을 어드민 페이지에 추가
 
-
-
+# noinspection PyDeprecation
 class Announcement(db.Model):
     __tablename__ = 'announcements'
     id = db.Column(db.Integer, primary_key=True)
@@ -55,6 +70,9 @@ class Announcement(db.Model):
     is_public = db.Column(db.Boolean, default=True)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+
+
+
 
 
 # 공지사항 목록 조회
@@ -147,7 +165,7 @@ def update_announcement(id):
     특정 ID를 가진 공지사항을 수정합니다.
 
     요청 본문 (form-data):
-    - title: 공지사항 제목 (string, 선택)
+    - title: 공지사항 제목 (string, 선택)d
     - body: 공지사항 내용 (string, 선택)
     - is_public: 공개 여부 (boolean, 선택)
     - attachment: 첨부 파일 (file, 선택)
@@ -159,7 +177,7 @@ def update_announcement(id):
    }
 
    상태 코드:
-     - 200 OK: 성공적으로 공지사항이 수정됨
+     - 200 OK: 성공적으로 공지수정됨사항이
      - 401 Unauthorized: 로그인 필요
      - 404 Not Found: 해당 ID의 공지사항이 존재하지 않음
      - 500 Internal Server Error: 서버 오류 발생
@@ -286,7 +304,7 @@ def register():
 
         # 이메일, 사용자명 중복 체크
         if User.query.filter_by(username=data['username']).first():
-            return jsonify({'success': False, 'message': '이미 존재하는 사용자명입니다.'}), 400
+            return jsonify({'success': False, 'message': '이미 존재하는 사용자명입니다.'}),
 
         if User.query.filter_by(email=data['email']).first():
             return jsonify({'success': False, 'message': '이미 존재하는 이메일입니다.'}), 400
@@ -406,8 +424,7 @@ def admin_required(f):
 
 
 # 기존의 공지사항 관련 라우트들에 admin_required 데코레이터 적용
-@app.route('/api/announcements/create', methods=['POST'])
-@admin_required
+@app.route('/api/announcements/create/<int:id>', methods=['POST'])
 def create_announcement():
     try:
         data = request.form
@@ -443,7 +460,6 @@ def create_announcement():
     except Exception as e:
         db.session.rollback()
         return jsonify({'success': False, 'message': str(e)}), 500
-
 
 if __name__ == '__main__':
     with app.app_context():
